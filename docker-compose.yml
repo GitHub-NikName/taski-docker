@@ -1,0 +1,37 @@
+version: '3'
+
+volumes:
+    pg_data:
+    static:
+
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    volumes:
+      - static:/backend_static
+    depends_on:
+      - db
+
+  frontend:
+    env_file: .env
+    build: ./frontend/
+    command: cp -r /app/build/. /frontend_static
+    volumes:
+      - static:/frontend_static
+
+  db:
+    image: postgres:15.3-alpine3.18
+    env_file: .env
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  gateway:
+    build: ./gateway
+    depends_on:
+      - backend
+    volumes:
+      - static:/staticfiles
+    ports:
+      - "8000:80"
