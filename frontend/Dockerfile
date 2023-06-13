@@ -1,10 +1,9 @@
 FROM node:18-alpine3.17
 WORKDIR /app
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
+COPY package*.json ./
 
-RUN npm i
+RUN npm ci
 
 COPY . .
 RUN npm run build
